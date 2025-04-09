@@ -241,3 +241,65 @@ plt.subplots_adjust(left=0.15, right=0.95, top=0.9, bottom=0.15)
 plt.show()
 
 print('Reattempted cleaning and plotting complete.')
+
+
+
+# Create Scatter Plot: Tenure vs Churn (with jitter) and Box Plot: Revenue per Month by Account Segment
+
+# Filter rows for scatter plot for non-missing tenure and churn
+scatter_df = df.dropna(subset=['tenure', 'churn'])
+
+# Create figure with two subplots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
+plt.subplots_adjust(left=0.1, right=0.9, top=0.85, bottom=0.15, wspace=0.3)
+
+#########################
+# Scatter Plot on ax1
+#########################
+
+# Apply jitter for the churn column
+jitter_scatter = np.random.normal(0, 0.05, size=len(scatter_df))
+churn_jittered = scatter_df['churn'] + jitter_scatter
+
+scatter = ax1.scatter(scatter_df['tenure'], churn_jittered, 
+                      alpha=0.6, c=scatter_df['churn'], cmap='coolwarm', 
+                      s=50, edgecolor='#333333', linewidth=0.5)
+
+# Axis and title for scatter plot
+ax1.set_title('Relationship Between Tenure and Churn', fontsize=20, fontweight='semibold', color='#222222', pad=15)
+ax1.set_xlabel('Tenure (months)', fontsize=16, fontweight='medium', color='#333333', labelpad=10)
+ax1.set_ylabel('Churn Status (with jitter)', fontsize=16, fontweight='medium', color='#333333', labelpad=10)
+ax1.tick_params(axis='both', labelsize=14, colors='#555555')
+ax1.grid(True, linestyle='--', alpha=0.7, color='#E0E0E0')
+ax1.set_ylim(-0.2, 1.2)
+ax1.set_yticks([0, 1])
+ax1.set_yticklabels(['Not Churned', 'Churned'])
+for spine in ax1.spines.values():
+    spine.set_color('#333333')
+    spine.set_linewidth(0.8)
+
+#########################
+# Box Plot on ax2
+#########################
+
+# For the box plot, we'll use revenue per month vs account_segment
+# Filter out rows with missing revenue values and account_segment
+boxplot_df = df.dropna(subset=['rev_per_month', 'account_segment'])
+
+sns.boxplot(x='account_segment', y='rev_per_month', data=boxplot_df, ax=ax2,
+            palette=['#766CDB', '#DA847C', '#D9CC8B', '#7CD9A5', '#877877', '#52515E'])
+
+# Axis and title for box plot
+ax2.set_title('Revenue per Month by Account Segment', fontsize=20, fontweight='semibold', color='#222222', pad=15)
+ax2.set_xlabel('Account Segment', fontsize=16, fontweight='medium', color='#333333', labelpad=10)
+ax2.set_ylabel('Revenue per Month', fontsize=16, fontweight='medium', color='#333333', labelpad=10)
+ax2.tick_params(axis='both', labelsize=14, colors='#555555')
+ax2.grid(True, linestyle='--', alpha=0.7, color='#E0E0E0')
+for spine in ax2.spines.values():
+    spine.set_color('#333333')
+    spine.set_linewidth(0.8)
+
+plt.tight_layout()
+plt.show()
+
+print('Scatter plot and box plot created successfully.')
